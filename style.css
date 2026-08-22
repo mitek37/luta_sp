@@ -13,8 +13,8 @@ html {
 body {
     margin: 0;
 
-    background: #ffffff;
-    color: #222222;
+    background: #414141;
+    color: #8a8a8a;
 
     font-family:
         -apple-system,
@@ -57,7 +57,8 @@ button {
 
     padding: 20px;
 
-    background: #eeeeee;
+    background: #a5a5a5;
+    color: black;
 
     position: sticky;
     top: 0;
@@ -88,7 +89,7 @@ button {
 
     padding: 0 15px;
 
-    border: 2px solid #555555;
+    border: 2px solid #000000;
     border-radius: 8px;
 
     background: #ffffff;
@@ -109,7 +110,7 @@ button {
     border: none;
     border-radius: 8px;
 
-    background: #333333;
+    background: #007ac0;
     color: #ffffff;
 
     font-size: 16px;
@@ -117,7 +118,7 @@ button {
 }
 
 .search-button:hover {
-    background: #555555;
+    background: #62afdb;
 }
 
 .search-button:active {
@@ -295,7 +296,7 @@ button {
 
     text-align: center;
 
-    color: #777777;
+    color: white;
 
     font-size: 18px;
 }

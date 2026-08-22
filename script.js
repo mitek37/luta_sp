@@ -127,7 +127,7 @@ async function loadData() {
         imageGrid.innerHTML = "";
 
         noResult.textContent =
-            "データの読み込みに失敗しました。";
+            "データが読み込めないｱﾙﾖ～";
 
         noResult.classList.remove("hidden");
     }
