@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>画像掲示板</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ==============================
+        メイン画面
+    ============================== -->
+    <main id="mainScreen" class="screen">
+
+        <div class="search-area">
+
+            <!-- 検索BOX -->
+            <div class="search-row">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="タグを入力"
+                    autocomplete="off"
+                >
+
+                <button
+                    id="searchButton"
+                    class="search-button"
+                >
+                    検索
+                </button>
+
+            </div>
+
+
+            <!-- タイプ選択 -->
+            <div class="filter-row">
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        class="type-checkbox"
+                        value="資料"
+                        checked
+                    >
+                    <span>資料</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        class="type-checkbox"
+                        value="設定"
+                        checked
+                    >
+                    <span>設定</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        class="type-checkbox"
+                        value="イラスト"
+                        checked
+                    >
+                    <span>イラスト</span>
+                </label>
+
+            </div>
+
+
+            <!-- 完全一致 / 部分一致 -->
+            <div class="match-row">
+
+                <label class="radio-label">
+                    <input
+                        type="radio"
+                        name="matchType"
+                        value="exact"
+                        checked
+                    >
+                    <span>完全一致</span>
+                </label>
+
+                <label class="radio-label">
+                    <input
+                        type="radio"
+                        name="matchType"
+                        value="partial"
+                    >
+                    <span>部分一致</span>
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================
+            検索結果
+        ============================== -->
+
+        <section
+            id="imageGrid"
+            class="image-grid"
+        >
+        </section>
+
+
+        <!-- 検索結果0件 -->
+        <div
+            id="noResult"
+            class="no-result hidden"
+        >
+            検索結果がありません
+        </div>
+
+
+        <!-- TOPボタン -->
+        <button
+            id="topButton"
+            class="top-button"
+            aria-label="ページ上部へ戻る"
+        >
+            ↑
+        </button>
+
+    </main>
+
+
+    <!-- ==============================
+        画像ビュー画面
+    ============================== -->
+
+    <main
+        id="viewerScreen"
+        class="screen hidden"
+    >
+
+        <div class="viewer">
+
+            <!-- 画像 -->
+            <div class="viewer-image-area">
+
+                <img
+                    id="viewerImage"
+                    class="viewer-image"
+                    src=""
+                    alt=""
+                >
+
+            </div>
+
+
+            <!-- 前後移動 -->
+            <div class="viewer-navigation">
+
+                <button
+                    id="prevButton"
+                    class="navigation-button"
+                    aria-label="前の画像"
+                >
+                    &lt;
+                </button>
+
+
+                <div
+                    id="viewerTitle"
+                    class="viewer-title"
+                >
+                </div>
+
+
+                <button
+                    id="nextButton"
+                    class="navigation-button"
+                    aria-label="次の画像"
+                >
+                    &gt;
+                </button>
+
+            </div>
+
+
+            <!-- タグ -->
+            <div
+                id="viewerTags"
+                class="viewer-tags"
+            >
+            </div>
+
+
+            <!-- メイン画面へ戻る -->
+            <button
+                id="backButton"
+                class="back-button"
+            >
+                一覧に戻る
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
