@@ -38,6 +38,12 @@ const searchInput =
 const searchButton =
     document.getElementById("searchButton");
 
+const editImageButton = document.getElementById("editImageButton");
+
+document.getElementById("uploadButton").addEventListener("click", function () {
+    window.location.href = "newupload.html";
+});
+
 const imageGrid =
     document.getElementById("imageGrid");
 
@@ -170,6 +176,25 @@ function setupEvents() {
 
         }
     );
+
+    editImageButton.addEventListener("click", () => {
+        if (currentViewerIndex < 0 || currentViewerIndex >= currentResults.length) return;
+        
+        const [filename, data] = currentResults[currentViewerIndex];
+        
+        // 編集対象のデータを localStorage に保存して編集画面へ渡す
+        const editTargetData = {
+            filename: filename,
+            name: data.name || filename,
+            type: data.type || "資料",
+            tags: data.tags || []
+        };
+        
+        localStorage.setItem("edit_target_image", JSON.stringify(editTargetData));
+        
+        // 編集ページへ遷移
+        window.location.href = "edit.html";
+    });
 
 
     /*

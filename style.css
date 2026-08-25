@@ -125,6 +125,50 @@ button {
     transform: translateY(1px);
 }
 
+.upload-button {
+    display: block;
+
+    width: 180px;
+    height: 52px;
+
+    margin: 0 auto 18px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #e01a9e;
+    color: #ffffff;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.upload-button:hover {
+    background: #db62bd;
+}
+
+.upload-button:active {
+    transform: translateY(1px);
+}
+
+.edit-image-button {
+    margin-top: 15px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 7px;
+    background: #e67e22;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit-image-button:hover {
+    background: #d35400;
+}
+
 
 /* =========================================
     タイプ・検索方式

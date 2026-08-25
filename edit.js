@@ -1,110 +1,510 @@
-"use strict";
+// ============================================================
+// Cloudflare Worker
+// ============================================================
 
-// ★作成した Cloudflare Worker の URL を設定してください
-const WORKER_URL = "https://luta-sp-uploader.alamodemitek37.workers.dev/";
+const WORKER_URL =
+    "https://luta-sp-uploader.alamodemitek37.workers.dev/";
 
+
+// 編集対象データ
 let targetData = null;
 
+
+// ============================================================
+// ページ読み込み
+// ============================================================
+
 document.addEventListener("DOMContentLoaded", () => {
-    // localStorage から編集対象データを取得
+
+    // localStorageから編集対象データを取得
     const rawData = localStorage.getItem("edit_target_image");
-    
+
     if (!rawData) {
         alert("編集対象の画像データが見つかりません。");
         window.location.href = "index.html";
         return;
     }
 
-    targetData = JSON.parse(rawData);
+    try {
+        targetData = JSON.parse(rawData);
+    } catch (err) {
+        console.error("編集対象データのJSON解析に失敗:", err);
 
-    // 画面項目へ反映
-    document.getElementById("previewImg").src = "image/" + encodeURIComponent(targetData.filename);
-    document.getElementById("filenameDisplay").textContent = targetData.filename;
-    document.getElementById("nameInput").value = targetData.name;
-    document.getElementById("typeSelect").value = targetData.type;
-    document.getElementById("tagsInput").value = (targetData.tags || []).join("、");
+        alert("編集対象の画像データが壊れています。");
+        localStorage.removeItem("edit_target_image");
+        window.location.href = "index.html";
+        return;
+    }
+
+
+    // ========================================================
+    // 画面へ反映
+    // ========================================================
+
+    const previewImg = document.getElementById("previewImg");
+    const filenameDisplay = document.getElementById("filenameDisplay");
+    const nameInput = document.getElementById("nameInput");
+    const typeSelect = document.getElementById("typeSelect");
+    const tagsInput = document.getElementById("tagsInput");
+
+
+    // プレビュー画像
+    if (previewImg) {
+        previewImg.src =
+            "image/" + encodeURIComponent(targetData.filename);
+
+        previewImg.onerror = () => {
+            console.warn(
+                "プレビュー画像を読み込めませんでした:",
+                targetData.filename
+            );
+        };
+    }
+
+
+    // ファイル名
+    if (filenameDisplay) {
+        filenameDisplay.textContent =
+            targetData.filename || "";
+    }
+
+
+    // 名前
+    if (nameInput) {
+        nameInput.value =
+            targetData.name || "";
+    }
+
+
+    // タイプ
+    if (typeSelect) {
+        typeSelect.value =
+            targetData.type || "資料";
+    }
+
+
+    // タグ
+    if (tagsInput) {
+        tagsInput.value =
+            (targetData.tags || []).join("、");
+    }
 });
 
+
+// ============================================================
 // タグ入力文字列の分解
+// ============================================================
+
 function parseTags(text) {
-    if (!text || !text.trim()) return [];
-    return text.split("、").map(t => t.trim()).filter((t, idx, self) => t.length > 0 && self.indexOf(t) === idx);
+
+    if (!text || !text.trim()) {
+        return [];
+    }
+
+    return text
+        .split("、")
+        .map(t => t.trim())
+        .filter(
+            (t, idx, self) =>
+                t.length > 0 &&
+                self.indexOf(t) === idx
+        );
 }
 
-// 編集コミット（更新）
+
+// ============================================================
+// 既存画像の編集
+// ============================================================
+
 async function saveEdit() {
-    const newName = document.getElementById("nameInput").value.trim();
-    if (!newName) return alert("名前を入力してください。");
 
-    const newType = document.getElementById("typeSelect").value;
-    const newTags = parseTags(document.getElementById("tagsInput").value);
+    if (!targetData) {
+        alert("編集対象のデータがありません。");
+        return;
+    }
 
-    if (!confirm("変更内容をコミット（反映）しますか？")) return;
 
-    const saveBtn = document.getElementById("saveBtn");
+    const nameInput =
+        document.getElementById("nameInput");
+
+    const typeSelect =
+        document.getElementById("typeSelect");
+
+    const tagsInput =
+        document.getElementById("tagsInput");
+
+    const saveBtn =
+        document.getElementById("saveBtn");
+
+
+    const newName =
+        nameInput.value.trim();
+
+
+    if (!newName) {
+        alert("名前を入力してください。");
+        return;
+    }
+
+
+    const newType =
+        typeSelect.value;
+
+
+    const newTags =
+        parseTags(tagsInput.value);
+
+
+    if (!confirm("変更内容をGitHubへ反映しますか？")) {
+        return;
+    }
+
+
     saveBtn.disabled = true;
+
     setStatus("GitHubへ反映中...");
 
-    const pendingChanges = [{
-        action: "edit",
-        filename: targetData.filename,
-        name: newName,
-        image_type: newType,
-        tags: newTags
-    }];
 
-    await sendCommitToWorker({ pendingChanges });
+    const pendingChanges = [
+        {
+            action: "edit",
+
+            filename: targetData.filename,
+
+            name: newName,
+
+            image_type: newType,
+
+            tags: newTags
+        }
+    ];
+
+
+    await sendCommitToWorker({
+        pendingChanges
+    });
 }
 
-// 既存画像の削除コミット
+
+// ============================================================
+// 既存画像の削除
+// ============================================================
+
 async function deleteImage() {
-    if (!confirm(`本当に「${targetData.filename}」を削除しますか？\n※サイト上から画像とデータが削除されます。`)) return;
+
+    if (!targetData) {
+        alert("削除対象のデータがありません。");
+        return;
+    }
+
+
+    const filename =
+        targetData.filename;
+
+
+    if (
+        !confirm(
+            `本当に「${filename}」消してまうのー？\n\n`
+        )
+    ) {
+        return;
+    }
+
+
+    const deleteBtn =
+        document.getElementById("deleteBtn");
+
+
+    if (deleteBtn) {
+        deleteBtn.disabled = true;
+    }
+
 
     setStatus("削除処理を実行中...");
 
-    const pendingChanges = [{
-        action: "delete",
-        filename: targetData.filename
-    }];
 
-    await sendCommitToWorker({ pendingChanges });
+    const pendingChanges = [
+        {
+            action: "delete",
+
+            filename: filename
+        }
+    ];
+
+
+    await sendCommitToWorker({
+        pendingChanges
+    });
 }
 
-// Worker への送信共通処理
+
+// ============================================================
+// Cloudflare Workerへの送信
+// ============================================================
+
 async function sendCommitToWorker(payload) {
+
     try {
-        const response = await fetch(WORKER_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
 
-        const result = await response.json();
+        console.log("========== Worker通信開始 ==========");
+        console.log("Worker URL:", WORKER_URL);
+        console.log("送信データ:", payload);
 
-        if (!result.success) {
-            throw new Error(result.error || "更新に失敗しました。");
+
+        // ----------------------------------------------------
+        // fetch
+        // ----------------------------------------------------
+
+        let response;
+
+        try {
+
+            response = await fetch(
+                WORKER_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify(payload)
+                }
+            );
+
+        } catch (fetchError) {
+
+            // ------------------------------------------------
+            // Failed to fetch / Load failed
+            // ------------------------------------------------
+
+            console.error(
+                "Workerへのfetchに失敗しました:",
+                fetchError
+            );
+
+
+            throw new Error(
+                "Cloudflare Workerへ接続できませんでした。\n\n" +
+                "・Workerが正常に公開されているか\n" +
+                "・Worker URLが正しいか\n" +
+                "・CORS設定に問題がないか\n" +
+                "・Worker側でエラーが発生していないか\n" +
+                "を確認してください。\n\n" +
+                `元のエラー: ${fetchError.message}`
+            );
         }
 
-        setStatus("反映が完了しました！元の画面に戻ります...");
-        alert("コミットが完了しました！");
 
-        // 一時データを消去して掲示板に戻る
-        localStorage.removeItem("edit_target_image");
-        window.location.href = "index.html";
+        console.log(
+            "HTTPステータス:",
+            response.status
+        );
+
+        console.log(
+            "HTTP OK:",
+            response.ok
+        );
+
+
+        // ----------------------------------------------------
+        // レスポンス本文をまずtextで取得
+        // ----------------------------------------------------
+        //
+        // いきなり response.json() すると、
+        // WorkerがJSON以外を返した場合に
+        // 「Unexpected token ...」などになってしまうため、
+        // まずtextとして取得します。
+        //
+
+        const responseText =
+            await response.text();
+
+
+        console.log(
+            "Workerレスポンス:",
+            responseText
+        );
+
+
+        // ----------------------------------------------------
+        // HTTPエラー
+        // ----------------------------------------------------
+
+        if (!response.ok) {
+
+            let errorMessage =
+                `WorkerがHTTP ${response.status}を返しました。`;
+
+            try {
+
+                const errorData =
+                    JSON.parse(responseText);
+
+                if (errorData.error) {
+                    errorMessage +=
+                        `\n\n${errorData.error}`;
+                }
+
+            } catch (parseError) {
+
+                if (responseText) {
+                    errorMessage +=
+                        `\n\n${responseText}`;
+                }
+            }
+
+
+            throw new Error(errorMessage);
+        }
+
+
+        // ----------------------------------------------------
+        // JSON解析
+        // ----------------------------------------------------
+
+        let result;
+
+        try {
+
+            result =
+                JSON.parse(responseText);
+
+        } catch (jsonError) {
+
+            console.error(
+                "WorkerレスポンスのJSON解析に失敗:",
+                jsonError
+            );
+
+            throw new Error(
+                "Cloudflare Workerから正常なJSONレスポンスが返ってきませんでした。\n\n" +
+                "Workerの実行結果を確認してください。\n\n" +
+                "レスポンス:\n" +
+                responseText.substring(0, 1000)
+            );
+        }
+
+
+        console.log(
+            "Worker解析結果:",
+            result
+        );
+
+
+        // ----------------------------------------------------
+        // Worker側のsuccess確認
+        // ----------------------------------------------------
+
+        if (!result.success) {
+
+            throw new Error(
+                result.error ||
+                "Worker側で更新処理に失敗しました。"
+            );
+        }
+
+
+        // ====================================================
+        // 成功
+        // ====================================================
+
+        console.log(
+            "========== Worker通信成功 =========="
+        );
+
+
+        setStatus(
+            "反映が完了しました！元の画面に戻ります..."
+        );
+
+
+        alert(
+            "GitHubへのコミットが完了しました！"
+        );
+
+
+        // 一時データ削除
+        localStorage.removeItem(
+            "edit_target_image"
+        );
+
+
+        // 掲示板へ戻る
+        window.location.href =
+            "index.html";
+
 
     } catch (err) {
-        setStatus("エラーが発生しました。");
-        alert(`エラー: ${err.message}`);
-        document.getElementById("saveBtn").disabled = false;
+
+        // ====================================================
+        // エラー
+        // ====================================================
+
+        console.error(
+            "========== Worker通信エラー =========="
+        );
+
+        console.error(err);
+
+
+        setStatus(
+            "エラーが発生しました。"
+        );
+
+
+        alert(
+            "GitHubへの反映に失敗しました。\n\n" +
+            err.message
+        );
+
+
+        // ボタンを再び押せるようにする
+
+        const saveBtn =
+            document.getElementById("saveBtn");
+
+        const deleteBtn =
+            document.getElementById("deleteBtn");
+
+
+        if (saveBtn) {
+            saveBtn.disabled = false;
+        }
+
+        if (deleteBtn) {
+            deleteBtn.disabled = false;
+        }
     }
 }
 
-// キャンセルして元の画面に戻る
+
+// ============================================================
+// キャンセル
+// ============================================================
+
 function cancelEdit() {
-    localStorage.removeItem("edit_target_image");
-    window.location.href = "index.html";
+
+    localStorage.removeItem(
+        "edit_target_image"
+    );
+
+    window.location.href =
+        "index.html";
 }
 
+
+// ============================================================
+// ステータス表示
+// ============================================================
+
 function setStatus(msg) {
-    document.getElementById("statusText").textContent = msg;
+
+    const statusText =
+        document.getElementById("statusText");
+
+    if (statusText) {
+        statusText.textContent = msg;
+    }
 }
