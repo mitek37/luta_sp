@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像登録 Webツール</title>
+    <link rel="stylesheet" href="stylenew.css">
+</head>
+<body>
+
+<div class="app-container">
+    <header class="app-header">
+        <h1>画像登録 Webツール</h1>
+        <p class="subtitle">リポジトリへの画像・メタデータ一括コミットツール</p>
+    </header>
+
+    <div class="main-layout">
+        <!-- 左カラム：入力・プレビューエリア -->
+        <section class="card input-section">
+            <h2>新規画像を登録</h2>
+            
+            <!-- 画像プレビュー枠 -->
+            <div class="image-preview-wrapper" id="previewWrapper">
+                <img id="previewImage" src="" alt="プレビュー" class="hidden">
+                <div class="preview-placeholder" id="previewPlaceholder">
+                    <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>画像を選択してください</span>
+                </div>
+            </div>
+
+            <form id="uploadForm" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="fileInput">画像ファイル <span class="required">*</span></label>
+                    <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp, image/gif">
+                </div>
+
+                <div class="form-group">
+                    <label for="nameInput">名前 <span class="required">*</span></label>
+                    <input type="text" id="nameInput" placeholder="画像の名前を入力">
+                </div>
+
+                <div class="form-group">
+                    <label for="typeInput">タイプ <span class="required">*</span></label>
+                    <select id="typeInput">
+                        <option value="資料">資料</option>
+                        <option value="設定・小ネタ">設定・小ネタ</option>
+                        <option value="イラスト">イラスト</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tagsInput">タグ</label>
+                    <input type="text" id="tagsInput" placeholder="「、」で区切って入力">
+                    <span class="help-text">例: メインキャラ、背景、2026</span>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-block" onclick="addPendingImage()">
+                    登録待ちリストに追加
+                </button>
+            </form>
+        </section>
+
+        <!-- 右カラム：待機リストエリア -->
+        <section class="card list-section">
+            <div class="list-header">
+                <h2>登録待ち一覧 (<span id="itemCount">0</span>件)</h2>
+                <button class="btn btn-danger btn-sm" onclick="clearPending()">全件削除</button>
+            </div>
+
+            <div class="list-container" id="pendingList">
+                <div class="empty-state">待機中の画像はありません</div>
+            </div>
+
+            <div class="action-footer">
+                <button id="uploadBtn" class="btn btn-success btn-large btn-block" onclick="startUpload()">
+                    全件アップロード実行
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- 下部ステータス表示 -->
+    <section class="card status-section">
+        <div class="status-label">ステータス</div>
+        <div id="statusText" class="status-content">待機中</div>
+    </section>
+</div>
+
+<!-- 編集用モーダルダイヤログ -->
+<div id="editModal" class="modal hidden">
+    <div class="modal-content">
+        <h3>登録待ち画像の編集</h3>
+        <div class="modal-preview-wrapper">
+            <img id="editModalPreview" src="" alt="編集対象プレビュー">
+            <p id="editModalFilename" class="filename-display"></p>
+        </div>
+        
+        <div class="form-group">
+            <label for="editNameInput">名前</label>
+            <input type="text" id="editNameInput">
+        </div>
+
+        <div class="form-group">
+            <label for="editTypeInput">タイプ</label>
+            <select id="editTypeInput">
+                <option value="資料">資料</option>
+                <option value="設定・小ネタ">設定・小ネタ</option>
+                <option value="イラスト">イラスト</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="editTagsInput">タグ（「、」区切り）</label>
+            <input type="text" id="editTagsInput">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeEditModal()">キャンセル</button>
+            <button class="btn btn-primary" onclick="saveModalEdit()">変更を保存</button>
+        </div>
+    </div>
+</div>
+
+<script src="scriptnew.js"></script>
+</body>
+</html>
