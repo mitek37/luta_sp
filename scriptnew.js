@@ -1,4 +1,4 @@
-const WORKER_URL = "https://your-worker-name.xxx.workers.dev";
+const WORKER_URL = "https://luta-sp-uploader.alamodemitek37.workers.dev/";
 
 let pendingImages = [];
 let editingIndex = null;
