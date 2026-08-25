@@ -54,16 +54,16 @@ async function addPendingImage() {
     const typeInput = document.getElementById('typeInput');
     const tagsInput = document.getElementById('tagsInput');
 
-    if (!fileInput.files[0]) return alert('画像ファイルを選択してください。');
+    if (!fileInput.files[0]) return alert('画像ファイルを選択してネ！');
     const name = nameInput.value.trim();
-    if (!name) return alert('名前を入力してください。');
+    if (!name) return alert('名前を入力してネ！');
 
     const file = fileInput.files[0];
     const filename = file.name.replace(/[<>"\/\\|?*:]/g, '_');
 
     // リスト内での重複チェック
     if (pendingImages.some(img => img.filename.toLowerCase() === filename.toLowerCase())) {
-        return alert('同じファイル名の画像が既に待機リストに追加されています。');
+        return alert('同じファイル名の画像が既に待機リストにいるみたいでごわす');
     }
 
     // DataURLおよびBase64化
@@ -93,7 +93,7 @@ async function addPendingImage() {
     tagsInput.value = '';
     resetPreview();
 
-    setStatus(`${pendingImages.length}枚の新規画像が登録待ちです。`);
+    setStatus(`${pendingImages.length}枚の新規画像がアップロード待ちですわ`);
 }
 
 // リストの再描画
@@ -103,7 +103,7 @@ function renderList() {
     itemCount.textContent = pendingImages.length;
 
     if (pendingImages.length === 0) {
-        container.innerHTML = '<div class="empty-state">待機中の画像はありません</div>';
+        container.innerHTML = '<div class="empty-state">待機中の画像はありませヌ</div>';
         return;
     }
 
@@ -149,10 +149,10 @@ function removeItem(index) {
 
 function clearPending() {
     if (pendingImages.length === 0) return;
-    if (!confirm('待機リストをすべてクリアしますか？')) return;
+    if (!confirm('えー全部消しちゃうのー？')) return;
     pendingImages = [];
     renderList();
-    setStatus('登録待ちリストを全消ししました。');
+    setStatus('アップロード待ちリストを全消ししました。');
 }
 
 // モーダル編集機能
@@ -178,7 +178,7 @@ function saveModalEdit() {
     if (editingIndex === null) return;
 
     const newName = document.getElementById('editNameInput').value.trim();
-    if (!newName) return alert('名前を入力してください。');
+    if (!newName) return alert('名前を入力してクレメンス！');
 
     pendingImages[editingIndex].name = newName;
     pendingImages[editingIndex].image_type = document.getElementById('editTypeInput').value;
@@ -186,14 +186,14 @@ function saveModalEdit() {
 
     renderList();
     closeEditModal();
-    setStatus('変更内容を待機リストに保存しました。');
+    setStatus('変更内容を待機リストに保存したデウ～');
 }
 
 // アップロード処理
 async function startUpload() {
-    if (pendingImages.length === 0) return alert('アップロード対象の画像がありません。');
+    if (pendingImages.length === 0) return alert('アップロード対象の画像がナイヨォ！');
 
-    if (!confirm(`${pendingImages.length}件の画像をGitHubリポジトリへ反映しますか？`)) return;
+    if (!confirm(`${pendingImages.length}件の画像をアップロードしてもよろしいです？`)) return;
 
     const uploadBtn = document.getElementById('uploadBtn');
     uploadBtn.disabled = true;
@@ -246,7 +246,7 @@ async function startUpload() {
 
         alert(
             'アップロード完了！\n' +
-            'データと画像が正常に反映されました。'
+            'おつかれさま～(∩^-^)∩(∩･v･)∩'
         );
 
         pendingImages = [];

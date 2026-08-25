@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const rawData = localStorage.getItem("edit_target_image");
 
     if (!rawData) {
-        alert("編集対象の画像データが見つかりません。");
+        alert("編集対象の画像データが見つからナイヨ～");
         window.location.href = "index.html";
         return;
     }
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
         console.error("編集対象データのJSON解析に失敗:", err);
 
-        alert("編集対象の画像データが壊れています。");
+        alert("編集対象の画像データが壊れているらしい！！！");
         localStorage.removeItem("edit_target_image");
         window.location.href = "index.html";
         return;
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         previewImg.onerror = () => {
             console.warn(
-                "プレビュー画像を読み込めませんでした:",
+                "プレビュー画像を読み込めませんでしたのだ...:",
                 targetData.filename
             );
         };
@@ -142,7 +142,7 @@ async function saveEdit() {
 
 
     if (!newName) {
-        alert("名前を入力してください。");
+        alert("名前を入力してネ！");
         return;
     }
 
@@ -155,7 +155,7 @@ async function saveEdit() {
         parseTags(tagsInput.value);
 
 
-    if (!confirm("変更内容をGitHubへ反映しますか？")) {
+    if (!confirm("この内容で変えるデスカ？")) {
         return;
     }
 
@@ -380,7 +380,7 @@ async function sendCommitToWorker(payload) {
 
             throw new Error(
                 "Cloudflare Workerから正常なJSONレスポンスが返ってきませんでした。\n\n" +
-                "Workerの実行結果を確認してください。\n\n" +
+                "Workerの実行結果を確認してクレメンス\n\n" +
                 "レスポンス:\n" +
                 responseText.substring(0, 1000)
             );
@@ -421,7 +421,7 @@ async function sendCommitToWorker(payload) {
 
 
         alert(
-            "GitHubへのコミットが完了しました！"
+            "更新が完了したze！"
         );
 
 
@@ -455,7 +455,7 @@ async function sendCommitToWorker(payload) {
 
 
         alert(
-            "GitHubへの反映に失敗しました。\n\n" +
+            "更新に失敗しました。トホホ...\n\n" +
             err.message
         );
 
