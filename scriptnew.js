@@ -211,14 +211,54 @@ async function startUpload() {
     try {
         const response = await fetch(WORKER_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pendingImages: payloadImages })
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                pendingImages: payloadImages,
+                pendingChanges: []
+            })
         });
 
-        const result = await response.json();
+
+        const responseText = await response.text();
+
+        let result;
+
+        try {
+
+            result = JSON.parse(
+                responseText
+            );
+
+        } catch {
+
+            throw new Error(
+                `WorkerからJSONではないレスポンスが返ってきました。\n\n` +
+                `HTTP ${response.status}\n\n` +
+                responseText
+            );
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                `Workerエラー HTTP ${response.status}`
+            );
+
+        }
+
 
         if (!result.success) {
-            throw new Error(result.error || '不明なエラーが発生しました。');
+
+            throw new Error(
+                result.error ||
+                '不明なエラーが発生しました。'
+            );
+
         }
 
         setStatus('サイトへの反映が完了しました！');
