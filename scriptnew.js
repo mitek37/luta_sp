@@ -267,6 +267,13 @@ async function startUpload() {
     }
 }
 
+// 一覧ページへ戻る
+document
+    .getElementById("backToIndexButton")
+    .addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
 function setStatus(text) {
     document.getElementById('statusText').textContent = text;
 }

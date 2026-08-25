@@ -479,6 +479,12 @@ async function sendCommitToWorker(payload) {
     }
 }
 
+document
+    .getElementById("backToViewerButton")
+    .addEventListener("click", () => {
+        window.history.back();
+    });
+
 
 // ============================================================
 // キャンセル
