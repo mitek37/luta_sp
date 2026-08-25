@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像情報の編集 - Luta_sp画像掲示板</title>
+    <link rel="stylesheet" href="stylenew.css">
+    <style>
+        /* 編集画面専用のスタイル拡張 */
+        .edit-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #a5a5a5;
+            color: #000;
+            border-radius: 8px;
+        }
+        .edit-preview-area {
+            text-align: center;
+            margin-bottom: 20px;
+            background: #222;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .edit-preview-image {
+            max-height: 250px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #000;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-submit { background: #007ac0; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; flex: 1; cursor: pointer; }
+        .btn-delete { background: #d9534f; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        .btn-cancel { background: #666; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        .status-msg { margin-top: 15px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+<main class="edit-container">
+    <h2>画像情報の編集</h2>
+
+    <div class="edit-preview-area">
+        <img id="previewImg" class="edit-preview-image" src="" alt="編集対象画像">
+        <p id="filenameDisplay" style="color:#fff; margin-top:5px; font-size:14px;"></p>
+    </div>
+
+    <form id="editForm" onsubmit="return false;">
+        <div class="form-group">
+            <label for="nameInput">名前</label>
+            <input type="text" id="nameInput" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="typeSelect">タイプ</label>
+            <select id="typeSelect" class="form-control">
+                <option value="資料">資料</option>
+                <option value="設定・小ネタ">設定・小ネタ</option>
+                <option value="イラスト">イラスト</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tagsInput">タグ（「、」で区切って入力）</label>
+            <input type="text" id="tagsInput" class="form-control" placeholder="例: キャラ、背景、2026">
+        </div>
+
+        <div class="button-group">
+            <button type="button" class="btn-cancel" onclick="cancelEdit()">キャンセル</button>
+            <button type="button" class="btn-delete" onclick="deleteImage()">画像を削除</button>
+            <button type="button" class="btn-submit" id="saveBtn" onclick="saveEdit()">コミット (更新)</button>
+        </div>
+    </form>
+
+    <div id="statusText" class="status-msg"></div>
+</main>
+
+<script src="edit.js"></script>
+</body>
+</html>
