@@ -220,56 +220,48 @@ async function startUpload() {
             })
         });
 
+        console.log("Worker HTTP status:", response.status);
 
         const responseText = await response.text();
+
+        console.log("Worker response text:", responseText);
 
         let result;
 
         try {
-
-            result = JSON.parse(
-                responseText
-            );
-
-        } catch {
-
+            result = JSON.parse(responseText);
+        } catch (e) {
             throw new Error(
-                `WorkerからJSONではないレスポンスが返ってきました。\n\n` +
-                `HTTP ${response.status}\n\n` +
-                responseText
+                `WorkerからJSONではない応答が返りました:\n${responseText}`
             );
-
         }
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                result.error ||
-                `Workerエラー HTTP ${response.status}`
-            );
-
-        }
-
 
         if (!result.success) {
-
             throw new Error(
-                result.error ||
-                '不明なエラーが発生しました。'
+                result.error || '不明なエラーが発生しました。'
             );
-
         }
 
         setStatus('サイトへの反映が完了しました！');
-        alert('アップロード完了！データと画像が正常に反映されました。');
+
+        alert(
+            'アップロード完了！\n' +
+            'データと画像が正常に反映されました。'
+        );
 
         pendingImages = [];
         renderList();
 
     } catch (err) {
+
+        console.error("UPLOAD ERROR:", err);
+
         setStatus('アップロードに失敗しました。');
-        alert(`エラーが発生しました:\n${err.message}`);
+
+        alert(
+            `エラーが発生しました:\n${err.message}`
+        );
+
     } finally {
         uploadBtn.disabled = false;
     }
