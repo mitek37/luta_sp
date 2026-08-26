@@ -20,6 +20,9 @@ let currentViewerIndex = -1;
 // 現在の画面
 let currentScreen = "main";
 
+// ビュー画面を開く前のスクロール位置を保持する変数
+let lastScrollPosition = 0;
+
 
 /* =========================================
     DOM
@@ -711,6 +714,9 @@ function openViewer(index) {
 
     }
 
+    // ビュー画面を開く直前のスクロール位置を保存
+    lastScrollPosition = window.scrollY;
+
 
     currentViewerIndex =
         index;
@@ -1004,25 +1010,23 @@ function searchByTag(tag) {
     メイン画面表示
 ========================================= */
 
-function showMainScreen(
-    updateHistory = true
-) {
+function showMainScreen(updateHistory = true) {
 
-    viewerScreen.classList.add(
-        "hidden"
-    );
+    viewerScreen.classList.add("hidden");
+    mainScreen.classList.remove("hidden");
 
-    mainScreen.classList.remove(
-        "hidden"
-    );
+    currentScreen = "main";
 
-
-    currentScreen =
-        "main";
-
+    // 保存しておいた元のスクロール位置へ戻す
+    // DOMの非表示解除(classList.remove)が反映された後にスクロールさせるため setTimeout を使用
+    setTimeout(() => {
+        window.scrollTo({
+            top: lastScrollPosition,
+            behavior: "instant"
+        });
+    }, 0);
 
     if (updateHistory) {
-
         history.pushState(
             {
                 screen: "main"
@@ -1030,7 +1034,5 @@ function showMainScreen(
             "",
             "#main"
         );
-
     }
-
 }

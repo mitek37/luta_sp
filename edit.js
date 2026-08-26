@@ -432,8 +432,7 @@ async function sendCommitToWorker(payload) {
 
 
         // 掲示板へ戻る
-        window.location.href =
-            "index.html";
+        window.history.back();
 
 
     } catch (err) {
@@ -496,8 +495,7 @@ function cancelEdit() {
         "edit_target_image"
     );
 
-    window.location.href =
-        "index.html";
+    window.history.back();
 }
 
 
